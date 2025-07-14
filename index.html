@@ -66,6 +66,7 @@
             background-color: #2d2d2d;
             border-radius: 8px;
             overflow: hidden;
+            margin-bottom: 30px;
         }
         
         .chart-title {
@@ -121,6 +122,35 @@
             border-radius: 8px;
             margin-bottom: 20px;
             border-left: 4px solid #007acc;
+        }
+        
+        .framework-section {
+            margin-top: 15px;
+        }
+        
+        .phase-breakdown {
+            margin: 15px 0;
+        }
+        
+        .phase {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #333;
+            border-radius: 4px;
+        }
+        
+        .key-insight {
+            background-color: #2a4a2a;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #4CAF50;
+            margin-top: 15px;
+        }
+        
+        .usage-instructions {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #555;
         }
         
         .year-section {
@@ -197,6 +227,42 @@
             font-size: 12px;
             margin-bottom: 3px;
         }
+        
+        .baseline-input {
+            background-color: #2a3a4a;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #FFA726;
+        }
+        
+        .summary-section {
+            background-color: #2d2d2d;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #FFA726;
+        }
+        
+        .summary-title {
+            color: #FFA726;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .summary-content {
+            line-height: 1.6;
+            font-size: 16px;
+        }
+        
+        .highlight {
+            color: #FFA726;
+            font-weight: bold;
+        }
+        
+        .growth-highlight {
+            color: #4CAF50;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -204,9 +270,58 @@
         <h1>Investment Returns Calculator</h1>
         
         <div class="instructions">
-            <strong>Instructions:</strong> For each year, choose whether to input specific returns OR target ROI multiplier. The calculator will automatically compute the other value. Mix and match as needed!
+            <strong>Investment ROI Model - Strategic Framework:</strong>
+            <p>This calculator models a 3-year joint go-to-market (GTM) investment with <strong>increasing returns over time</strong> as your partnership engine scales and matures.</p>
+            
+            <div class="framework-section">
+                <h4>📈 Default Model Logic (Recommended Baseline)</h4>
+                <div class="phase-breakdown">
+                    <div class="phase">
+                        <strong>Year 1 (0.8× ROI) - "Pilot & Foundation"</strong>
+                        <p>Modest returns as you build the foundation: pilot programs, team training, initial campaigns, and proof-of-concept development. Investment pays for itself while establishing credibility.</p>
+                    </div>
+                    
+                    <div class="phase">
+                        <strong>Year 2 (2.5× ROI) - "Build & Convert"</strong>
+                        <p>Accelerating returns as your foundation pays off: POCs convert to real deals, pipeline matures, joint playbooks scale, and you land multiple mid-sized opportunities.</p>
+                    </div>
+                    
+                    <div class="phase">
+                        <strong>Year 3 (7.34× ROI) - "Scale & Optimize"</strong>
+                        <p>Maximum leverage as all elements click: managed services mature, repeatable playbooks drive efficiency, ABM campaigns accelerate, and you close large enterprise deals with renewals.</p>
+                    </div>
+                </div>
+                
+                <div class="key-insight">
+                    <strong>🎯 Key Insight:</strong> Each year's investment doesn't decay—it <em>compounds</em>. Your Year 1 pilots become Year 3's proven playbooks. Early relationship building pays forward exponentially as your joint GTM engine reaches full maturity.
+                    <br><br>
+                    <strong>Result:</strong> 9.2× cumulative ROI on $2.5M total investment over 3 years.
+                </div>
+            </div>
+            
+            <div class="usage-instructions">
+                <h4>🔧 How to Use This Calculator</h4>
+                <p><strong>For each year, choose your input method:</strong></p>
+                <ul>
+                    <li><strong>Returns Mode:</strong> Enter specific return amounts if you have concrete projections</li>
+                    <li><strong>Target ROI Mode:</strong> Enter desired multipliers to see required returns for that goal</li>
+                </ul>
+                <p><strong>Mix and match:</strong> Model Year 1 with specific returns, Year 2 with target ROI, etc. Perfect for scenario planning and investment conversations.</p>
+            </div>
         </div>
         
+        <div class="input-section">
+            <h3>Partnership Baseline</h3>
+            <div class="baseline-input">
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="baseline-revenue">Current Annual Partnership Revenue ($M):</label>
+                        <input type="number" id="baseline-revenue" value="30" min="0" step="1">
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="input-section">
             <h3>Investment Parameters</h3>
             <div class="input-grid">
@@ -349,7 +464,7 @@
         </div>
         
         <div class="chart-container">
-            <div class="chart-title">3) Aggregate by Calendar Year</div>
+            <div class="chart-title">Aggregate by Calendar Year</div>
             <table>
                 <thead>
                     <tr>
@@ -367,11 +482,19 @@
                 </tbody>
             </table>
         </div>
+        
+        <div class="summary-section">
+            <div class="summary-title">📊 Business Impact Summary</div>
+            <div class="summary-content" id="business-summary">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
     </div>
 
     <script>
         // Get all input elements
         const inputs = {
+            baselineRevenue: document.getElementById('baseline-revenue'),
             initialInvest: document.getElementById('initial-invest'),
             year2Invest: document.getElementById('year2-invest'),
             year3Invest: document.getElementById('year3-invest'),
@@ -419,6 +542,32 @@
             }
             
             updateTable();
+        }
+
+        function updateBusinessSummary(totalReturns, totalInvestment, baselineRevenue) {
+            const investmentROI = totalReturns / totalInvestment;
+            const incrementalRevenue = totalReturns / 1000; // Convert from K to M
+            const newTotalRevenue = baselineRevenue + incrementalRevenue;
+            const businessGrowthRate = (incrementalRevenue / baselineRevenue) * 100;
+            const businessMultiplier = newTotalRevenue / baselineRevenue;
+
+            const summaryElement = document.getElementById('business-summary');
+            summaryElement.innerHTML = `
+                Starting with a <span class="highlight">$${baselineRevenue}M</span> annual partnership revenue baseline, this investment strategy delivers:
+                <br><br>
+                • <strong>Investment Returns:</strong> <span class="highlight">${investmentROI.toFixed(1)}× ROI</span> on <span class="highlight">$${(totalInvestment/1000).toFixed(1)}M</span> total investment over 3 years
+                <br><br>
+                • <strong>Revenue Growth:</strong> <span class="growth-highlight">+$${incrementalRevenue.toFixed(1)}M</span> incremental revenue, growing your partnership from <span class="highlight">$${baselineRevenue}M</span> to <span class="growth-highlight">$${newTotalRevenue.toFixed(1)}M</span> annually
+                <br><br>
+                • <strong>Business Impact:</strong> <span class="growth-highlight">${businessGrowthRate.toFixed(0)}%</span> growth rate represents a <span class="growth-highlight">${businessMultiplier.toFixed(2)}× business multiplier</span> on your current partnership baseline
+                <br><br>
+                <strong>Strategic Context:</strong> ${businessGrowthRate < 50 ? 
+                    'This represents sustainable growth that scales well with larger partnership baselines.' : 
+                    businessGrowthRate < 100 ? 
+                    'This is aggressive but achievable growth that requires strong execution across all three phases.' : 
+                    'This is very aggressive growth that may be more suitable for smaller partnership baselines or require exceptional market conditions.'
+                }
+            `;
         }
 
         function updateTable() {
@@ -515,6 +664,9 @@
             const totalInvestment = cumInvest3;
             const totalROI = (totalReturns / totalInvestment) * 100;
             const totalMult = totalReturns / totalInvestment;
+
+            // Update business summary
+            updateBusinessSummary(totalReturns, totalInvestment, values.baselineRevenue);
 
             const tableBody = document.getElementById('results-table');
             tableBody.innerHTML = `
