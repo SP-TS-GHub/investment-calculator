@@ -122,6 +122,81 @@
             margin-bottom: 20px;
             border-left: 4px solid #007acc;
         }
+        
+        .year-section {
+            background-color: #333;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+        
+        .year-title {
+            color: #ffffff;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .calculation-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        
+        .toggle-label {
+            color: #cccccc;
+            font-size: 14px;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background-color: #555;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .toggle-switch.active {
+            background-color: #007acc;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(30px);
+        }
+        
+        .input-mode {
+            display: none;
+        }
+        
+        .input-mode.active {
+            display: block;
+        }
+        
+        .computed-value {
+            background-color: #1a4a1a;
+            border: 1px solid #4CAF50;
+            color: #4CAF50;
+            font-style: italic;
+        }
+        
+        .computed-label {
+            color: #4CAF50;
+            font-size: 12px;
+            margin-bottom: 3px;
+        }
     </style>
 </head>
 <body>
@@ -129,7 +204,7 @@
         <h1>Investment Returns Calculator</h1>
         
         <div class="instructions">
-            <strong>Instructions:</strong> Modify the input values below to see how they affect the investment returns. The table will update automatically with calculated totals and ROI percentages.
+            <strong>Instructions:</strong> For each year, choose whether to input specific returns OR target ROI multiplier. The calculator will automatically compute the other value. Mix and match as needed!
         </div>
         
         <div class="input-section">
@@ -149,39 +224,126 @@
                 </div>
             </div>
             
-            <h4>Year 1 Returns</h4>
-            <div class="input-grid">
-                <div class="input-group">
-                    <label for="year1-i1">Return from I₁ (K):</label>
-                    <input type="number" id="year1-i1" value="600" min="0" step="1">
+            <div class="year-section">
+                <h4 class="year-title">Year 1 Returns</h4>
+                <div class="calculation-toggle">
+                    <span class="toggle-label">Returns</span>
+                    <div class="toggle-switch" data-year="1">
+                        <div class="toggle-slider"></div>
+                    </div>
+                    <span class="toggle-label">Target ROI</span>
+                </div>
+                
+                <div class="input-mode returns-mode active" data-year="1">
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="year1-i1">Return from I₁ (K):</label>
+                            <input type="number" id="year1-i1" value="600" min="0" step="1">
+                        </div>
+                        <div class="input-group">
+                            <div class="computed-label">Calculated ROI:</div>
+                            <input type="text" id="year1-roi-display" class="computed-value" readonly>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-mode roi-mode" data-year="1">
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="year1-roi">Target ROI Multiplier:</label>
+                            <input type="number" id="year1-roi" value="0.8" min="0" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <div class="computed-label">Required Returns:</div>
+                            <input type="text" id="year1-returns-display" class="computed-value" readonly>
+                        </div>
+                    </div>
                 </div>
             </div>
-            
-            <h4>Year 2 Returns</h4>
-            <div class="input-grid">
-                <div class="input-group">
-                    <label for="year2-i1">Return from I₁ (K):</label>
-                    <input type="number" id="year2-i1" value="1875" min="0" step="1">
+
+            <div class="year-section">
+                <h4 class="year-title">Year 2 Returns</h4>
+                <div class="calculation-toggle">
+                    <span class="toggle-label">Returns</span>
+                    <div class="toggle-switch" data-year="2">
+                        <div class="toggle-slider"></div>
+                    </div>
+                    <span class="toggle-label">Target ROI</span>
                 </div>
-                <div class="input-group">
-                    <label for="year2-i2">Return from I₂ (K):</label>
-                    <input type="number" id="year2-i2" value="2250" min="0" step="1">
+                
+                <div class="input-mode returns-mode active" data-year="2">
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="year2-i1">Return from I₁ (K):</label>
+                            <input type="number" id="year2-i1" value="1875" min="0" step="1">
+                        </div>
+                        <div class="input-group">
+                            <label for="year2-i2">Return from I₂ (K):</label>
+                            <input type="number" id="year2-i2" value="2250" min="0" step="1">
+                        </div>
+                        <div class="input-group">
+                            <div class="computed-label">Calculated ROI:</div>
+                            <input type="text" id="year2-roi-display" class="computed-value" readonly>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-mode roi-mode" data-year="2">
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="year2-roi">Target ROI Multiplier:</label>
+                            <input type="number" id="year2-roi" value="2.5" min="0" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <div class="computed-label">Required Total Returns:</div>
+                            <input type="text" id="year2-returns-display" class="computed-value" readonly>
+                        </div>
+                    </div>
                 </div>
             </div>
-            
-            <h4>Year 3 Returns</h4>
-            <div class="input-grid">
-                <div class="input-group">
-                    <label for="year3-i1">Return from I₁ (K):</label>
-                    <input type="number" id="year3-i1" value="5250" min="0" step="1">
+
+            <div class="year-section">
+                <h4 class="year-title">Year 3 Returns</h4>
+                <div class="calculation-toggle">
+                    <span class="toggle-label">Returns</span>
+                    <div class="toggle-switch" data-year="3">
+                        <div class="toggle-slider"></div>
+                    </div>
+                    <span class="toggle-label">Target ROI</span>
                 </div>
-                <div class="input-group">
-                    <label for="year3-i2">Return from I₂ (K):</label>
-                    <input type="number" id="year3-i2" value="6300" min="0" step="1">
+                
+                <div class="input-mode returns-mode active" data-year="3">
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="year3-i1">Return from I₁ (K):</label>
+                            <input type="number" id="year3-i1" value="5250" min="0" step="1">
+                        </div>
+                        <div class="input-group">
+                            <label for="year3-i2">Return from I₂ (K):</label>
+                            <input type="number" id="year3-i2" value="6300" min="0" step="1">
+                        </div>
+                        <div class="input-group">
+                            <label for="year3-i3">Return from I₃ (K):</label>
+                            <input type="number" id="year3-i3" value="6800" min="0" step="1">
+                        </div>
+                        <div class="input-group">
+                            <div class="computed-label">Calculated ROI:</div>
+                            <input type="text" id="year3-roi-display" class="computed-value" readonly>
+                        </div>
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label for="year3-i3">Return from I₃ (K):</label>
-                    <input type="number" id="year3-i3" value="6800" min="0" step="1">
+                
+                <div class="input-mode roi-mode" data-year="3">
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="year3-roi">Target ROI Multiplier:</label>
+                            <input type="number" id="year3-roi" value="7.34" min="0" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <div class="computed-label">Required Total Returns:</div>
+                            <input type="text" id="year3-returns-display" class="computed-value" readonly>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -218,7 +380,17 @@
             year2I2: document.getElementById('year2-i2'),
             year3I1: document.getElementById('year3-i1'),
             year3I2: document.getElementById('year3-i2'),
-            year3I3: document.getElementById('year3-i3')
+            year3I3: document.getElementById('year3-i3'),
+            year1ROI: document.getElementById('year1-roi'),
+            year2ROI: document.getElementById('year2-roi'),
+            year3ROI: document.getElementById('year3-roi')
+        };
+
+        // Track which mode each year is in
+        const yearModes = {
+            1: 'returns', // 'returns' or 'roi'
+            2: 'returns',
+            3: 'returns'
         };
 
         function formatNumber(num) {
@@ -229,10 +401,34 @@
             return `${multiplier.toFixed(2)}× (${Math.round(roi)}%)`;
         }
 
+        function toggleYear(year) {
+            const toggleSwitch = document.querySelector(`.toggle-switch[data-year="${year}"]`);
+            const returnsMode = document.querySelector(`.returns-mode[data-year="${year}"]`);
+            const roiMode = document.querySelector(`.roi-mode[data-year="${year}"]`);
+            
+            if (yearModes[year] === 'returns') {
+                yearModes[year] = 'roi';
+                toggleSwitch.classList.add('active');
+                returnsMode.classList.remove('active');
+                roiMode.classList.add('active');
+            } else {
+                yearModes[year] = 'returns';
+                toggleSwitch.classList.remove('active');
+                returnsMode.classList.add('active');
+                roiMode.classList.remove('active');
+            }
+            
+            updateTable();
+        }
+
         function updateTable() {
             const values = {};
+            
+            // Get investment values
             for (let key in inputs) {
-                values[key] = parseFloat(inputs[key].value) || 0;
+                if (inputs[key]) {
+                    values[key] = parseFloat(inputs[key].value) || 0;
+                }
             }
 
             // Calculate cumulative investments
@@ -240,20 +436,79 @@
             const cumInvest2 = values.initialInvest + values.year2Invest;
             const cumInvest3 = values.initialInvest + values.year2Invest + values.year3Invest;
 
-            // Calculate total returns
-            const totalReturn1 = values.year1I1;
-            const totalReturn2 = values.year2I1 + values.year2I2;
-            const totalReturn3 = values.year3I1 + values.year3I2 + values.year3I3;
+            let totalReturn1, totalReturn2, totalReturn3;
+            let roi1, roi2, roi3;
+            let mult1, mult2, mult3;
 
-            // Calculate ROI
-            const roi1 = (totalReturn1 / cumInvest1) * 100;
-            const roi2 = (totalReturn2 / cumInvest2) * 100;
-            const roi3 = (totalReturn3 / cumInvest3) * 100;
+            // Year 1 calculations
+            if (yearModes[1] === 'returns') {
+                totalReturn1 = values.year1I1;
+                mult1 = totalReturn1 / cumInvest1;
+                roi1 = mult1 * 100;
+                document.getElementById('year1-roi-display').value = `${mult1.toFixed(2)}× (${Math.round(roi1)}%)`;
+            } else {
+                mult1 = values.year1ROI;
+                totalReturn1 = cumInvest1 * mult1;
+                roi1 = mult1 * 100;
+                document.getElementById('year1-returns-display').value = `${formatNumber(Math.round(totalReturn1))} K`;
+            }
 
-            // Calculate multipliers
-            const mult1 = totalReturn1 / cumInvest1;
-            const mult2 = totalReturn2 / cumInvest2;
-            const mult3 = totalReturn3 / cumInvest3;
+            // Year 2 calculations
+            if (yearModes[2] === 'returns') {
+                totalReturn2 = values.year2I1 + values.year2I2;
+                mult2 = totalReturn2 / cumInvest2;
+                roi2 = mult2 * 100;
+                document.getElementById('year2-roi-display').value = `${mult2.toFixed(2)}× (${Math.round(roi2)}%)`;
+            } else {
+                mult2 = values.year2ROI;
+                totalReturn2 = cumInvest2 * mult2;
+                roi2 = mult2 * 100;
+                document.getElementById('year2-returns-display').value = `${formatNumber(Math.round(totalReturn2))} K`;
+            }
+
+            // Year 3 calculations
+            if (yearModes[3] === 'returns') {
+                totalReturn3 = values.year3I1 + values.year3I2 + values.year3I3;
+                mult3 = totalReturn3 / cumInvest3;
+                roi3 = mult3 * 100;
+                document.getElementById('year3-roi-display').value = `${mult3.toFixed(2)}× (${Math.round(roi3)}%)`;
+            } else {
+                mult3 = values.year3ROI;
+                totalReturn3 = cumInvest3 * mult3;
+                roi3 = mult3 * 100;
+                document.getElementById('year3-returns-display').value = `${formatNumber(Math.round(totalReturn3))} K`;
+            }
+
+            // Calculate display values for table (using proportions for ROI mode)
+            let displayYear1I1, displayYear2I1, displayYear2I2, displayYear3I1, displayYear3I2, displayYear3I3;
+
+            if (yearModes[1] === 'returns') {
+                displayYear1I1 = values.year1I1;
+            } else {
+                displayYear1I1 = totalReturn1;
+            }
+
+            if (yearModes[2] === 'returns') {
+                displayYear2I1 = values.year2I1;
+                displayYear2I2 = values.year2I2;
+            } else {
+                // Use original proportions
+                const originalTotal = 1875 + 2250;
+                displayYear2I1 = totalReturn2 * (1875 / originalTotal);
+                displayYear2I2 = totalReturn2 * (2250 / originalTotal);
+            }
+
+            if (yearModes[3] === 'returns') {
+                displayYear3I1 = values.year3I1;
+                displayYear3I2 = values.year3I2;
+                displayYear3I3 = values.year3I3;
+            } else {
+                // Use original proportions
+                const originalTotal = 5250 + 6300 + 6800;
+                displayYear3I1 = totalReturn3 * (5250 / originalTotal);
+                displayYear3I2 = totalReturn3 * (6300 / originalTotal);
+                displayYear3I3 = totalReturn3 * (6800 / originalTotal);
+            }
 
             // Total calculations
             const totalReturns = totalReturn1 + totalReturn2 + totalReturn3;
@@ -265,28 +520,28 @@
             tableBody.innerHTML = `
                 <tr>
                     <td>1</td>
-                    <td class="positive">${formatNumber(values.year1I1)} K</td>
+                    <td class="positive">${formatNumber(Math.round(displayYear1I1))} K</td>
                     <td class="dash">–</td>
                     <td class="dash">–</td>
-                    <td class="positive">${formatNumber(totalReturn1)} K</td>
+                    <td class="positive">${formatNumber(Math.round(totalReturn1))} K</td>
                     <td>${formatNumber(cumInvest1)} K</td>
                     <td class="multiplier">${formatROI(roi1, mult1)}</td>
                 </tr>
                 <tr>
                     <td>2</td>
-                    <td class="positive">${formatNumber(values.year2I1)} K</td>
-                    <td class="positive">${formatNumber(values.year2I2)} K</td>
+                    <td class="positive">${formatNumber(Math.round(displayYear2I1))} K</td>
+                    <td class="positive">${formatNumber(Math.round(displayYear2I2))} K</td>
                     <td class="dash">–</td>
-                    <td class="positive">${formatNumber(totalReturn2)} K</td>
+                    <td class="positive">${formatNumber(Math.round(totalReturn2))} K</td>
                     <td>${formatNumber(cumInvest2)} K</td>
                     <td class="multiplier">${formatROI(roi2, mult2)}</td>
                 </tr>
                 <tr>
                     <td>3</td>
-                    <td class="positive">${formatNumber(values.year3I1)} K</td>
-                    <td class="positive">${formatNumber(values.year3I2)} K</td>
-                    <td class="positive">${formatNumber(values.year3I3)} K</td>
-                    <td class="positive">${formatNumber(totalReturn3)} K</td>
+                    <td class="positive">${formatNumber(Math.round(displayYear3I1))} K</td>
+                    <td class="positive">${formatNumber(Math.round(displayYear3I2))} K</td>
+                    <td class="positive">${formatNumber(Math.round(displayYear3I3))} K</td>
+                    <td class="positive">${formatNumber(Math.round(totalReturn3))} K</td>
                     <td>${formatNumber(cumInvest3)} K</td>
                     <td class="multiplier">${formatROI(roi3, mult3)}</td>
                 </tr>
@@ -295,19 +550,29 @@
                     <td class="dash">–</td>
                     <td class="dash">–</td>
                     <td class="dash">–</td>
-                    <td class="positive"><strong>${formatNumber(totalReturns)} K</strong></td>
+                    <td class="positive"><strong>${formatNumber(Math.round(totalReturns))} K</strong></td>
                     <td><strong>${formatNumber(totalInvestment)} K</strong></td>
                     <td class="multiplier"><strong>${formatROI(totalROI, totalMult)}</strong></td>
                 </tr>
             `;
         }
 
+        // Add event listeners for toggles
+        document.querySelectorAll('.toggle-switch').forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                const year = parseInt(toggle.getAttribute('data-year'));
+                toggleYear(year);
+            });
+        });
+
         // Add event listeners to all inputs
         for (let key in inputs) {
-            inputs[key].addEventListener('input', updateTable);
+            if (inputs[key]) {
+                inputs[key].addEventListener('input', updateTable);
+            }
         }
 
-        // Initial table population
+        // Initialize
         updateTable();
     </script>
 </body>
